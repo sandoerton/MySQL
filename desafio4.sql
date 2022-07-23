@@ -1,4 +1,4 @@
--- https://www.devmedia.com.br/forum/select-com-coluna-condicional/28849
+USE SpotifyClone;
 
 SELECT 
     usuarios.usuario,
@@ -15,3 +15,5 @@ WHERE
     usuarios.id = historico_reproduzidas.usuario_id
 GROUP BY usuarios.usuario
 ORDER BY usuarios.usuario;
+
+-- https://www.devmedia.com.br/forum/select-com-coluna-condicional/28849
