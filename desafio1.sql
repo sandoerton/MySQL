@@ -1,21 +1,33 @@
+DROP DATABASE IF EXISTS SpotifyClone;
+
 CREATE DATABASE IF NOT EXISTS SpotifyClone;
 
 USE SpotifyClone;
 
-CREATE TABLE IF NOT EXISTS usuarios(
+CREATE TABLE IF NOT EXISTS SpotifyClone.planos(
 	id SMALLINT AUTO_INCREMENT NOT NULL,
-    usuario VARCHAR(10) NOT NULL,
-    idade SMALLINT NOT NULL,
+    plano VARCHAR(15) NOT NULL,
+    valor DOUBLE NOT NULL,
     CONSTRAINT PRIMARY KEY(id)
 ) engine = InnoDB;
 
-CREATE TABLE IF NOT EXISTS artistas(
+CREATE TABLE IF NOT EXISTS SpotifyClone.usuarios(
+	id SMALLINT AUTO_INCREMENT NOT NULL,
+    usuario VARCHAR(10) NOT NULL,
+    idade SMALLINT NOT NULL,
+    plano_id SMALLINT NOT NULL,
+    data_contrato DATE NOT NULL,
+    CONSTRAINT PRIMARY KEY(id),
+    FOREIGN KEY (plano_id) REFERENCES planos(id)
+) engine = InnoDB;
+
+CREATE TABLE IF NOT EXISTS SpotifyClone.artistas(
 	id SMALLINT AUTO_INCREMENT NOT NULL,
     artista VARCHAR(20) NOT NULL,
     CONSTRAINT PRIMARY KEY(id)
 ) engine = InnoDB;
 
-CREATE TABLE IF NOT EXISTS artista_favorito(
+CREATE TABLE IF NOT EXISTS SpotifyClone.favoritos(
 	usuario_id SMALLINT NOT NULL,
     artista_id SMALLINT NOT NULL,
     CONSTRAINT PRIMARY KEY(usuario_id, artista_id),
@@ -23,7 +35,7 @@ CREATE TABLE IF NOT EXISTS artista_favorito(
     FOREIGN KEY (artista_id) REFERENCES artistas (id)
 ) engine = InnoDB;
 
-CREATE TABLE IF NOT EXISTS albuns(
+CREATE TABLE IF NOT EXISTS SpotifyClone.albuns(
 	id SMALLINT AUTO_INCREMENT NOT NULL,
     album VARCHAR(20) NOT NULL,
     artista_id SMALLINT NOT NULL,
@@ -32,7 +44,7 @@ CREATE TABLE IF NOT EXISTS albuns(
     FOREIGN KEY (artista_id) REFERENCES artistas (id)
 ) engine = InnoDB;
 
-CREATE TABLE IF NOT EXISTS musicas(
+CREATE TABLE IF NOT EXISTS SpotifyClone.musicas(
 	id SMALLINT AUTO_INCREMENT NOT NULL,
     musica VARCHAR(35) NOT NULL,
     duracao INT NOT NULL,
@@ -41,7 +53,7 @@ CREATE TABLE IF NOT EXISTS musicas(
     FOREIGN KEY (album_id) REFERENCES albuns (id)
 ) engine = InnoDB;
 
-CREATE TABLE IF NOT EXISTS historico_reproduzidas(
+CREATE TABLE IF NOT EXISTS SpotifyClone.historico(
 	usuario_id SMALLINT NOT NULL,
     musica_id SMALLINT NOT NULL,
     data_e_hora DATETIME NOT NULL,
@@ -50,37 +62,27 @@ CREATE TABLE IF NOT EXISTS historico_reproduzidas(
     FOREIGN KEY (musica_id) REFERENCES musicas (id)
 ) engine = InnoDB;
 
-CREATE TABLE IF NOT EXISTS planos(
-	id SMALLINT AUTO_INCREMENT NOT NULL,
-    plano VARCHAR(15) NOT NULL,
-    valor DOUBLE NOT NULL,
-    CONSTRAINT PRIMARY KEY(id)
-) engine = InnoDB;
-
-CREATE TABLE IF NOT EXISTS contratos(
-	id SMALLINT AUTO_INCREMENT NOT NULL,
-    usuario_id SMALLINT NOT NULL,
-    plano_id SMALLINT NOT NULL,
-    data_contrato DATE NOT NULL,
-    CONSTRAINT PRIMARY KEY(id),
-    FOREIGN KEY (usuario_id) REFERENCES usuarios(id),
-    FOREIGN KEY (plano_id) REFERENCES planos(id)
-) engine = InnoDB;
-
-INSERT INTO usuarios(usuario, idade)
+INSERT INTO SpotifyClone.planos(plano, valor)
 VALUES
-	("Tathi", 23),
-    ("Cintia", 35),
-    ("Bill", 20),
-    ("Roger", 45),
-    ("Norman", 58),
-    ("Patrick", 33),
-    ("Vivian", 26),
-    ("Carol", 19),
-    ("Angelina", 42),
-    ("Paul", 46);
-    
-INSERT INTO artistas(artista)
+	("gratuito", 0),
+	("universitario", 5.99),
+    ("pessoal", 6.99),
+    ("familiar", 7.99);
+
+INSERT INTO SpotifyClone.usuarios(usuario, idade, plano_id, data_contrato)
+VALUES
+	("Tathi", 23, 1, "2019-10-20"),
+    ("Cintia", 35, 4, "2017-12-30"),
+    ("Bill", 20, 2, "2019-06-05"),
+    ("Roger", 45, 3, "2020-05-13"),
+    ("Norman", 58, 3, "2017-02-17"),
+    ("Patrick", 33, 4, "2017-01-06"),
+    ("Vivian", 26, 2, "2018-01-05"),
+    ("Carol", 19, 2, "2018-02-14"),
+    ("Angelina", 42, 4, "2018-04-29"),
+    ("Paul", 46, 4, "2017-01-17");
+
+INSERT INTO SpotifyClone.artistas(artista)
 VALUES
 	("Walter Phoenix"),
     ("Peter Strong"),
@@ -89,7 +91,7 @@ VALUES
     ("Tyler Isle"),
     ("Fog");
 
-INSERT INTO artista_favorito
+INSERT INTO SpotifyClone.favoritos
 VALUES
 	(1, 1),
     (1, 4),
@@ -114,7 +116,7 @@ VALUES
     (10, 2),
     (10, 6);
 
-INSERT INTO albuns(album, artista_id, ano_lancamento)
+INSERT INTO SpotifyClone.albuns(album, artista_id, ano_lancamento)
 VALUES
 	("Envious", 1, 1990),
     ("Exuberant", 1, 1993),
@@ -127,7 +129,7 @@ VALUES
     ("No guarantees", 5, 2015),
     ("Apparatus", 6, 2015);
     
-INSERT INTO musicas(musica, duracao, album_id)
+INSERT INTO SpotifyClone.musicas(musica, duracao, album_id)
 VALUES
 	("Soul For Us", 200, 1),
     ("Reflections Of Magic", 163, 1),
@@ -170,7 +172,7 @@ VALUES
     ("Baby", 136, 10),
     ("You Make Me Feel So..", 83, 10);
     
-INSERT INTO historico_reproduzidas
+INSERT INTO SpotifyClone.historico
 VALUES
 	(1, 36, "2020-02-28 10:45:55"),
     (1, 25, "2020-05-02 05:30:35"),
@@ -211,22 +213,3 @@ VALUES
     (10, 12, "2017-07-27 05:24:49"),
     (10, 13, "2017-12-25 01:03:57");
     
-INSERT INTO planos(plano, valor)
-VALUES
-	("gratuito", 0),
-	("universitario", 5.99),
-    ("pessoal", 6.99),
-    ("familiar", 7.99);
-
-INSERT INTO contratos(usuario_id, plano_id, data_contrato)
-VALUES
-	(1, 1, "2019-10-20"),
-    (2, 4, "2017-12-30"),
-    (3, 2, "2019-06-05"),
-    (4, 3, "2020-05-13"),
-    (5, 3, "2017-02-17"),
-    (6, 4, "2017-01-06"),
-    (7, 2, "2018-01-05"),
-    (8, 2, "2018-02-14"),
-    (9, 4, "2018-04-29"),
-	(10, 4, "2017-01-17");
