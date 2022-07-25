@@ -1,7 +1,7 @@
 SELECT 
     usuarios.usuario,
     COUNT(historico.musica_id) AS qtde_musicas_ouvidas,
-    CAST(SUM(musicas.duracao) / 60 AS DECIMAL (4 , 2 )) AS total_minutes
+    CAST(SUM(musicas.duracao) / 60 AS DECIMAL (4 , 2 )) AS total_minutos
 FROM
     usuarios
         INNER JOIN
